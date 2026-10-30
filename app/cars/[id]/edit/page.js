@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -13,13 +15,14 @@ export default function EditCarPage() {
 
   // โหลดข้อมูลรถปัจจุบันมาใส่ฟอร์ม
   useEffect(() => {
+    if (!id) return;
     fetch(`/api/cars/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        setBrand(data.brand);
-        setModel(data.model);
-        setPrice(data.price);
-        setDescription(data.description);
+        setBrand(data.brand || "");
+        setModel(data.model || "");
+        setPrice(data.price || "");
+        setDescription(data.description || "");
       });
   }, [id]);
 
