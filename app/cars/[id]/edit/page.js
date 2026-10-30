@@ -1,11 +1,9 @@
 "use client";
 
-export const dynamic = 'force-dynamic';
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-export default function EditCarPage() {
+function EditCarContent() {
   const { id } = useParams();
   const router = useRouter();
   const [brand, setBrand] = useState("");
@@ -67,5 +65,13 @@ export default function EditCarPage() {
         <button type="submit">Save</button>
       </form>
     </div>
+  );
+}
+
+export default function EditCarPage() {
+  return (
+    <Suspense fallback={<div>กำลังโหลด...</div>}>
+      <EditCarContent />
+    </Suspense>
   );
 }
