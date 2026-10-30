@@ -1,0 +1,722 @@
+@import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;0,500;0,700;0,800;1,800&display=swap");
+
+/* =========================================
+   1. ตัวแปรและ Reset ค่าพื้นฐาน
+   แนวคิด: โชว์รูมสายแรง — พื้นยางมะตอย + แดงเลือดหมู + มุมตัดเฉียง
+   ========================================= */
+:root {
+  --primary-color: #ff2a1f;
+  --primary-hover: #ff4a3d;
+  --primary-deep: #a80f08;
+  --primary-glow: rgba(255, 42, 31, 0.45);
+
+  --bg-color: #111113;
+  --panel: #1a1a1e;
+  --panel-raised: #222228;
+  --surface-color: rgba(26, 26, 30, 0.92);
+  --text-main: #f5f5f6;
+  --text-muted: #9b9ba6;
+  --border-color: #34343c;
+
+  --chamfer: 18px;
+  --chamfer-sm: 10px;
+  --radius-sm: 4px;
+  --radius-lg: 4px;
+
+  --transition-smooth: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-snap: 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Kanit", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text-main);
+  background-color: var(--bg-color);
+  /* เส้นเฉียงจาง ๆ เหมือนลายพื้นลานจอด */
+  background-image:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.018) 0 2px,
+      transparent 2px 14px
+    ),
+    radial-gradient(900px 400px at 100% 0%, rgba(255, 42, 31, 0.12), transparent 70%);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 3px;
+}
+
+/* =========================================
+   2. กล่อง Auth (Login / Register)
+   ========================================= */
+.auth-box {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 44px 32px 36px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-top: 6px solid var(--primary-color);
+  margin: 80px auto;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%,
+    0 100%
+  );
+}
+
+.auth-box h1 {
+  margin-bottom: 32px;
+  font-size: clamp(1.7rem, 4.5vw, 2.1rem);
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: var(--text-main);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--text-main);
+  background-color: var(--panel-raised);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary-color);
+  background-color: #2a2a31;
+  box-shadow: -6px 0 0 -2px var(--primary-color), 0 0 24px var(--primary-glow);
+}
+
+select option {
+  background: var(--panel-raised);
+  color: var(--text-main);
+}
+
+button {
+  position: relative;
+  overflow: hidden;
+  padding: 14px 28px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 0;
+  background: var(--primary-color);
+  color: #ffffff;
+  cursor: pointer;
+  transition: var(--transition-snap);
+  clip-path: polygon(
+    var(--chamfer-sm) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm)),
+    calc(100% - var(--chamfer-sm)) 100%,
+    0 100%,
+    0 var(--chamfer-sm)
+  );
+}
+
+/* แสงวิ่งผ่านปุ่มตอน hover */
+button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.35) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.5s ease;
+}
+
+button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px) skewX(-3deg);
+}
+
+button:hover::after {
+  transform: translateX(120%);
+}
+
+button:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.error {
+  color: #ffb4ae;
+  background-color: rgba(255, 42, 31, 0.12);
+  border: 1px solid var(--primary-color);
+  border-left: 6px solid var(--primary-color);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+a {
+  color: var(--primary-hover);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-box ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.auth-box li {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* =========================================
+   3. โชว์รูมรถยนต์ (Marketplace)
+   ========================================= */
+.marketplace-layout {
+  background-color: transparent;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.top-navbar {
+  position: relative;
+  color: white;
+  padding: 16px 0;
+  width: 100%;
+  background:
+    repeating-linear-gradient(
+      -55deg,
+      rgba(0, 0, 0, 0.16) 0 14px,
+      transparent 14px 28px
+    ),
+    linear-gradient(90deg, var(--primary-deep), var(--primary-color) 55%, #ff3d2e);
+  border-bottom: 4px solid #000;
+  box-shadow: 0 6px 0 var(--primary-color), 0 14px 30px var(--primary-glow);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.nav-logo {
+  font-size: 2rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  color: white;
+  text-decoration: none;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.45);
+}
+
+.nav-menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-menu a {
+  position: relative;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ขีดเส้นวิ่งใต้เมนู */
+.nav-menu a:not(.btn-nav-dashboard)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 3px;
+  width: 100%;
+  background: #000;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-smooth);
+}
+
+.nav-menu a:not(.btn-nav-dashboard):hover::after {
+  transform: scaleX(1);
+}
+
+.btn-nav-dashboard {
+  background-color: #000;
+  padding: 9px 18px;
+  border-radius: 0;
+  transform: skewX(-12deg);
+  border-right: 4px solid #fff;
+  transition: var(--transition-smooth);
+}
+
+.btn-nav-dashboard:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.search-banner {
+  position: relative;
+  background: linear-gradient(180deg, #0b0b0d, var(--panel));
+  padding: 56px 20px 48px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  overflow: hidden;
+}
+
+/* เงาแดงเฉียงเป็นฉากหลังของหัวข้อค้นหา */
+.search-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 58%, rgba(255, 42, 31, 0.18) 58%, rgba(255, 42, 31, 0.18) 66%, transparent 66%);
+  pointer-events: none;
+}
+
+.search-banner h2 {
+  position: relative;
+  margin-top: 0;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  font-style: italic;
+  color: var(--text-main);
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  max-width: 640px;
+  margin: 24px auto 0;
+}
+
+.search-box select {
+  width: 30%;
+}
+.search-box input {
+  width: 70%;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 36px 20px 60px;
+}
+
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 22px;
+  border-left: 10px solid var(--primary-color);
+  padding-left: 14px;
+  box-shadow: -4px 0 0 #000 inset;
+}
+
+.car-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 28px;
+  margin-top: 20px;
+}
+
+.car-card {
+  position: relative;
+  background: var(--panel);
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 5px solid var(--primary-color);
+  transition: transform var(--transition-snap);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--chamfer)) 0,
+    100% var(--chamfer),
+    100% 100%,
+    0 100%
+  );
+}
+
+.car-card:hover {
+  transform: translateY(-8px);
+}
+
+.car-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border-bottom: 3px solid #000;
+  filter: contrast(1.08) saturate(1.1);
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.car-card:hover img {
+  transform: scale(1.07);
+  filter: contrast(1.15) saturate(1.3);
+}
+
+.car-card h3,
+.car-card h2 {
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+
+/* ปุ่มซื้อในการ์ด (ถ้ามี style inline สีเขียวอยู่ ให้ลบออกจาก JSX) */
+.car-card button {
+  width: 100%;
+}
+
+.admin-panel {
+  background: var(--panel);
+  padding: 22px;
+  border-radius: 0;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-color);
+  border-top: 4px solid var(--primary-color);
+  border-left: 4px solid #000;
+}
+
+/* =========================================
+   4. หน้า Dashboard (แผงควบคุม)
+   ========================================= */
+.dashboard-layout {
+  width: 100%;
+  min-height: 100vh;
+  background-color: transparent;
+  padding-bottom: 50px;
+}
+
+.dashboard-navbar {
+  background: #0a0a0c;
+  padding: 16px 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 4px solid var(--primary-color);
+  margin-bottom: 40px;
+}
+
+.dashboard-navbar .nav-logo {
+  color: var(--text-main);
+  font-size: 1.5rem;
+  text-shadow: 3px 3px 0 var(--primary-deep);
+}
+
+.btn-logout-nav {
+  background-color: transparent;
+  color: var(--primary-hover);
+  padding: 8px 18px;
+  border-radius: 0;
+  border: 2px solid var(--primary-color);
+  cursor: pointer;
+  font-weight: 700;
+  clip-path: none;
+}
+.btn-logout-nav:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.dashboard-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.welcome-header {
+  margin-bottom: 30px;
+}
+.welcome-header h1 {
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-weight: 800;
+  font-style: italic;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+.welcome-header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 22px;
+}
+
+.dash-card {
+  background: var(--panel);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-left: 6px solid var(--border-color);
+  transition: transform var(--transition-snap), border-color var(--transition-smooth), background var(--transition-smooth);
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--chamfer-sm)),
+    calc(100% - var(--chamfer-sm)) 100%,
+    0 100%
+  );
+}
+
+.action-card:hover {
+  transform: translateX(6px);
+  background: var(--panel-raised);
+  border-left-color: var(--primary-color);
+}
+
+.profile-card {
+  grid-column: 1 / -1;
+  background: linear-gradient(120deg, var(--panel-raised), var(--panel) 70%);
+  border-left-color: var(--primary-color);
+}
+
+.profile-icon {
+  font-size: 3rem;
+  background: #000;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  border: 3px solid var(--primary-color);
+  transform: skewX(-8deg);
+}
+
+.profile-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.profile-info p {
+  margin: 8px 0;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 3px 14px;
+  border-radius: 0;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform: skewX(-12deg);
+}
+.role-badge.admin {
+  background: var(--primary-color);
+  color: #fff;
+}
+.role-badge.sale {
+  background: #22c55e;
+  color: #052e12;
+}
+.role-badge.staff {
+  background: #38bdf8;
+  color: #06283d;
+}
+
+.action-icon {
+  font-size: 2.8rem;
+}
+.action-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.action-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.admin-only h3 {
+  color: #ff7a70;
+}
+.admin-only:hover {
+  border-left-color: #ff7a70;
+}
+
+/* =========================================
+   5. Responsive และ Accessibility
+   ========================================= */
+@media (max-width: 600px) {
+  .search-box {
+    flex-direction: column;
+  }
+  .search-box select,
+  .search-box input {
+    width: 100%;
+  }
+  .nav-container {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  .car-card:hover,
+  .car-card:hover img,
+  button:hover {
+    transform: none;
+  }
+}
+
+/* =========================================
+   6. หน้าจัดการผู้ใช้ (Admin → Manage Users)
+   ========================================= */
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  overflow-x: auto;
+}
+
+.page > a {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 6px 14px 6px 10px;
+  color: var(--text-main);
+  background: var(--panel);
+  border-left: 5px solid var(--primary-color);
+  transition: var(--transition-smooth);
+}
+
+.page > a:hover {
+  background: var(--primary-color);
+  transform: translateX(-4px);
+}
+
+.page h1 {
+  margin-bottom: 28px;
+  font-size: clamp(1.9rem, 5vw, 2.8rem);
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  border-left: 10px solid var(--primary-color);
+  padding-left: 14px;
+}
+
+table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+thead th {
+  padding: 8px 16px;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 3px solid var(--primary-color);
+}
+
+tbody tr {
+  background: var(--panel);
+  transition: var(--transition-smooth);
+}
+
+tbody td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+tbody td:first-child {
+  width: 60px;
+  font-weight: 800;
+  color: var(--primary-hover);
+  border-left: 5px solid var(--border-color);
+}
+
+tbody td:last-child {
+  border-right: 1px solid var(--border-color);
+}
+
+tbody tr:hover {
+  background: var(--panel-raised);
+  transform: translateX(4px);
+}
+
+tbody tr:hover td:first-child {
+  border-left-color: var(--primary-color);
+}
+
+table select {
+  width: auto;
+  min-width: 150px;
+  padding: 10px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.page > p {
+  margin-top: 20px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-left: 6px solid var(--primary-color);
+  font-weight: 500;
+}
