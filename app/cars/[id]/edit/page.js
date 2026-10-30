@@ -13,7 +13,6 @@ export default function EditCarPage() {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
 
-  // โหลดข้อมูลรถปัจจุบันมาใส่ฟอร์ม
   useEffect(() => {
     if (!id) return;
     fetch(`/api/cars/${id}`)
@@ -26,7 +25,6 @@ export default function EditCarPage() {
       });
   }, [id]);
 
-  // ส่ง PUT เพื่อบันทึก แล้วกลับไปหน้ารายการ
   const handleUpdate = async (event) => {
     event.preventDefault();
     await fetch(`/api/cars/${id}`, {
@@ -34,7 +32,7 @@ export default function EditCarPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ brand, model, price, description }),
     });
-    router.push("/dashboard"); // กลับไปหน้าหลักหลังจากกด Save
+    router.push("/dashboard");
   };
 
   return (
