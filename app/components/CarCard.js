@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 export default function CarCard({ item, canEdit, canDelete, onDelete, onBuy }) {
-  const isSold = item.status === 'sold';
+  const isSold = item.status === "sold";
+  const isReserved = item.status === "reserved";
   const carImage = item.image || `/${item.id}.png`;
 
   return (
@@ -21,19 +22,26 @@ export default function CarCard({ item, canEdit, canDelete, onDelete, onBuy }) {
         <p style={{ color: "#6b7280", fontSize: "0.9rem" }}>{item.description}</p>
         
         <div style={{ marginTop: "12px", marginBottom: "12px" }}>
-          {!isSold ? (
+          {isSold ? (
+            <button 
+              disabled 
+              style={{ backgroundColor: "#d1d5db", color: "#ef4444", padding: "10px", border: "none", borderRadius: "8px", width: "100%", fontWeight: "bold", cursor: "not-allowed" }}
+            >
+              ❌ ขายแล้ว
+            </button>
+          ) : isReserved ? (
+            <button 
+              disabled 
+              style={{ backgroundColor: "#fef3c7", color: "#d97706", border: "1px solid #f59e0b", padding: "10px", borderRadius: "8px", width: "100%", fontWeight: "bold", cursor: "not-allowed" }}
+            >
+              ⏳ กำลังถูกจอง
+            </button>
+          ) : (
             <button 
               onClick={() => onBuy(item.id)} 
               style={{ backgroundColor: "#10b981", color: "white", padding: "10px", border: "none", borderRadius: "8px", cursor: "pointer", width: "100%", fontWeight: "bold" }}
             >
               🛒 ซื้อรถคันนี้
-            </button>
-          ) : (
-            <button 
-              disabled 
-              style={{ backgroundColor: "#d1d5db", color: "#6b7280", padding: "10px", border: "none", borderRadius: "8px", width: "100%", fontWeight: "bold", cursor: "not-allowed" }}
-            >
-              ❌ ขายแล้ว
             </button>
           )}
         </div>
