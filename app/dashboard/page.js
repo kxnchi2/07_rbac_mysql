@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { can } from "@/lib/rbac";
 
+// รายชื่อ role ที่สามารถดูรายการสั่งซื้อทั้งหมดได้
+const CAN_VIEW_ORDERS = ["superadmin", "admin", "sales"];
+
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]); 
@@ -17,10 +20,10 @@ export default function DashboardPage() {
       .then((userData) => {
         setUser(userData);
         
-        // ถ้าเป็น admin หรือ sale ให้ดึงข้อมูลรายการสั่งซื้อทั้งหมดมาแสดง
-        if (userData.role === "admin" || userData.role === "sale") {
+        // ✅ ให้ superadmin, admin และ sales ดึงรายการสั่งซื้อทั้งหมดมาแสดง
+        if (CAN_VIEW_ORDERS.includes(userData.role)) {
           fetch("/api/orders")
-            .then((res) => res.ok ? res.json() : [])
+            .then((res) => (res.ok ? res.json() : []))
             .then((orderData) => setOrders(orderData))
             .catch((err) => console.error("โหลดข้อมูลการสั่งซื้อไม่สำเร็จ", err));
         }
@@ -82,14 +85,14 @@ export default function DashboardPage() {
               <div className="action-icon">👥</div>
               <div>
                 <h3>จัดการบัญชีผู้ใช้งาน</h3>
-                <p>กำหนดสิทธิ์ (Role) หรือลบผู้ใช้งาน (เฉพาะ Admin)</p>
+                <p>กำหนดสิทธิ์ (Role) หรือลบผู้ใช้งาน (เฉพาะ Admin / Superadmin)</p>
               </div>
             </Link>
           )}
         </div>
 
-        {/* 📋 ตารางแสดงรายการสั่งซื้อ (เห็นเฉพาะ Admin และ Sale) */}
-        {(user.role === "admin" || user.role === "sale") && (
+        {/* 📋 ตารางแสดงรายการสั่งซื้อ (เห็นเฉพาะ Superadmin, Admin และ Sales) */}
+        {CAN_VIEW_ORDERS.includes(user.role) && (
           <div className="orders-section" style={{ marginTop: "40px", background: "#1e293b", padding: "24px", borderRadius: "12px", border: "1px solid #334155" }}>
             <h2 style={{ borderBottom: "2px solid #334155", paddingBottom: "12px", marginBottom: "20px", color: "#ffffff", fontSize: "1.25rem" }}>
               📋 รายการลูกค้าที่กดสั่งซื้อรถยนต์
