@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PERMISSIONS } from "@/lib/rbac";
 
-// รายชื่อ role ทั้งหมด ดึงจาก PERMISSIONS เพื่อไม่ต้องเขียนซ้ำ
-const ROLES = Object.keys(PERMISSIONS);
+// กรอง "sales" (มี s) ออกจากตัวเลือกทั้งหมด
+const ROLES = Object.keys(PERMISSIONS).filter((role) => role !== "sales");
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
@@ -56,8 +56,10 @@ export default function AdminUsersPage() {
               <td>
                 <select
                   value={user.role}
+                  disabled={user.role === "sales"}
                   onChange={(event) => handleRoleChange(user.id, event.target.value)}
                 >
+                  {user.role === "sales" && <option value="sales">sales</option>}
                   {ROLES.map((role) => (
                     <option key={role} value={role}>{role}</option>
                   ))}
