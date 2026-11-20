@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { PERMISSIONS } from "@/lib/rbac";
+import AdminNavbar from "@/app/components/AdminNavbar";
 
 const ALL_ROLES = Object.keys(PERMISSIONS);
 
@@ -13,8 +13,14 @@ export default function AdminUsersPage() {
 
   const loadCurrentUser = () => {
     fetch("/api/me")
-      .then((res) => res.json())
-      .then((data) => setCurrentUser(data.user || data));
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data) {
+          window.location.href = "/login";
+          return;
+        }
+        setCurrentUser(data.user || data);
+      });
   };
 
   const loadUsers = () => {
@@ -53,50 +59,53 @@ export default function AdminUsersPage() {
     : ALL_ROLES.filter((r) => !["sales", "admin", "superadmin"].includes(r));
 
   return (
-    <div className="page">
-      <Link href="/dashboard">← Dashboard</Link>
-      <h1>Manage Users</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Full name</th>
-            <th>Email</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => {
-            const isLocked =
-              !isSuperAdmin && ["sales", "admin", "superadmin"].includes(user.role);
+    <div className="dashboard-layout">
+      <AdminNavbar user={currentUser} />
 
-            return (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.fullname}</td>
-                <td>{user.email}</td>
-                <td>
-                  <select
-                    value={user.role}
-                    disabled={isLocked || user.id === currentUser?.id}
-                    onChange={(event) => handleRoleChange(user.id, event.target.value)}
-                  >
-                    {!availableRoles.includes(user.role) && (
-                      <option value={user.role}>{user.role}</option>
-                    )}
-                    {availableRoles.map((role) => (
-                      <option key={role} value={role}>
-                        {role}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      {message && <p>{message}</p>}
+      <div className="page">
+        <h1>👥 Manage Users</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Full name</th>
+              <th>Email</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => {
+              const isLocked =
+                !isSuperAdmin && ["sales", "admin", "superadmin"].includes(user.role);
+
+              return (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.fullname}</td>
+                  <td>{user.email}</td>
+                  <td>
+                    <select
+                      value={user.role}
+                      disabled={isLocked || user.id === currentUser?.id}
+                      onChange={(event) => handleRoleChange(user.id, event.target.value)}
+                    >
+                      {!availableRoles.includes(user.role) && (
+                        <option value={user.role}>{user.role}</option>
+                      )}
+                      {availableRoles.map((role) => (
+                        <option key={role} value={role}>
+                          {role}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {message && <p>{message}</p>}
+      </div>
     </div>
   );
 }
