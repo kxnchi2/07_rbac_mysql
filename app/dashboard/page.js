@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AdminNavbar from "@/app/components/AdminNavbar";
+import Toast from "@/app/components/Toast";
 
 const CAN_VIEW_ALL_ORDERS = ["superadmin", "admin", "sales"];
 
@@ -26,6 +27,12 @@ function formatDate(dateString) {
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (type, title, message) => {
+    setToast({ type, title, message });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const loadOrders = () => {
     fetch("/api/orders")
@@ -55,9 +62,11 @@ export default function DashboardPage() {
       body: JSON.stringify({ status: newStatus }),
     });
     if (res.ok) {
+      const label = STATUS_LABELS[newStatus]?.text || newStatus;
+      showToast("success", "อัปเดตสถานะแล้ว", `เปลี่ยนสถานะเป็น "${label}" เรียบร้อย`);
       loadOrders();
     } else {
-      alert("ไม่สามารถอัปเดตสถานะได้");
+      showToast("error", "เกิดข้อผิดพลาด", "ไม่สามารถอัปเดตสถานะได้");
     }
   };
 
@@ -69,6 +78,7 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-layout">
+      <Toast toast={toast} onClose={() => setToast(null)} />
       <AdminNavbar user={user} />
 
       <div className="dashboard-content">
@@ -92,7 +102,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* ตารางรายการจอง (ทีมงานเห็นทั้งหมดและเปลี่ยนสถานะได้ / ลูกค้าเห็นเฉพาะของตัวเอง) */}
+        {/* ตารางรายการจอง */}
         <div className="orders-section" style={{ marginTop: "32px", background: "#1e293b", padding: "24px", borderRadius: "12px", border: "1px solid #334155" }}>
           <h2 style={{ borderBottom: "2px solid #334155", paddingBottom: "12px", marginBottom: "20px", color: "#ffffff", fontSize: "1.25rem" }}>
             {isStaff

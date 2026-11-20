@@ -3,13 +3,19 @@
 import { useState, useEffect } from "react";
 import { PERMISSIONS } from "@/lib/rbac";
 import AdminNavbar from "@/app/components/AdminNavbar";
+import Toast from "@/app/components/Toast";
 
 const ALL_ROLES = Object.keys(PERMISSIONS);
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-  const [message, setMessage] = useState("");
+  const [toast, setToast] = useState(null);
+
+  const showToast = (type, title, message) => {
+    setToast({ type, title, message });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const loadCurrentUser = () => {
     fetch("/api/me")
@@ -31,7 +37,7 @@ export default function AdminUsersPage() {
           setUsers(data);
         } else {
           setUsers([]);
-          setMessage(data.message || "ไม่สามารถโหลดข้อมูลได้");
+          showToast("error", "โหลดข้อมูลไม่สำเร็จ", data.message || "ไม่สามารถโหลดรายชื่อผู้ใช้ได้");
         }
       });
   };
@@ -48,7 +54,11 @@ export default function AdminUsersPage() {
       body: JSON.stringify({ role }),
     });
     const data = await response.json();
-    setMessage(response.ok ? "Role updated" : data.message);
+    if (response.ok) {
+      showToast("success", "อัปเดตสิทธิ์สำเร็จ", `เปลี่ยนสิทธิ์ผู้ใช้งานเป็น "${role}" เรียบร้อยแล้ว`);
+    } else {
+      showToast("error", "ไม่อนุญาตให้ดำเนินการ", data.message || "เกิดข้อผิดพลาด");
+    }
     loadUsers();
   };
 
@@ -60,6 +70,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="dashboard-layout">
+      <Toast toast={toast} onClose={() => setToast(null)} />
       <AdminNavbar user={currentUser} />
 
       <div className="page">
@@ -104,7 +115,6 @@ export default function AdminUsersPage() {
             })}
           </tbody>
         </table>
-        {message && <p>{message}</p>}
       </div>
     </div>
   );
