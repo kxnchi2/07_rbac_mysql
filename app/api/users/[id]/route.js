@@ -39,7 +39,6 @@ export async function PUT(request, { params }) {
 
   // 4. กฎสำหรับ admin ธรรมดา (ถ้าไม่ใช่ superadmin)
   if (user.role === "admin") {
-    // ห้าม admin ยุ่งกับคนที่เป็น admin หรือ superadmin ด้วยกัน
     if (targetCurrentRole === "admin" || targetCurrentRole === "superadmin") {
       return NextResponse.json(
         { status: "error", message: "Admin cannot modify another admin or superadmin" },
@@ -47,7 +46,6 @@ export async function PUT(request, { params }) {
       );
     }
 
-    // ห้าม admin ปรับคนอื่นเป็น sales, admin หรือ superadmin
     if (["sales", "admin", "superadmin"].includes(role)) {
       return NextResponse.json(
         { status: "error", message: `Admin cannot assign the ${role} role` },
@@ -56,7 +54,7 @@ export async function PUT(request, { params }) {
     }
   }
 
-  // 5. อัปเดตลงฐานข้อมูล (superadmin จะข้ามข้อ 4 มาอัปเดตตรงนี้ได้เลย)
+  // 5. อัปเดตลงฐานข้อมูล
   await pool.query("UPDATE users SET role = ? WHERE id = ?", [role, id]);
   return NextResponse.json({ status: "ok" });
 }

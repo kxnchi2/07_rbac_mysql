@@ -7,7 +7,6 @@ export async function GET(request) {
   const { error } = await requirePermission(request, "user:manage");
   if (error) return error;
 
-  // เลือกเฉพาะคอลัมน์ที่จำเป็น ไม่ส่ง hash ของรหัสผ่านออกไป
   const [rows] = await pool.query("SELECT id, email, fullname, role FROM users ORDER BY id");
   return NextResponse.json(rows);
 }
