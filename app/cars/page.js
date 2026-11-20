@@ -269,6 +269,28 @@ export default function CarsPage() {
           ))}
         </div>
       </div>
+
+      {/* ส่วนแสดงที่อยู่และข้อมูลติดต่อร้าน */}
+      <footer
+        style={{
+          marginTop: "60px",
+          background: "#0f172a",
+          borderTop: "2px solid #ef4444",
+          padding: "32px 20px",
+          textAlign: "center",
+          color: "#cbd5e1",
+        }}
+      >
+        <h3 style={{ color: "#ffffff", fontSize: "1.2rem", marginBottom: "10px" }}>
+          🚗 AutoMarket โชว์รูมรถยนต์ป้ายแดง & มือสอง
+        </h3>
+        <p style={{ fontSize: "15px", lineHeight: "1.6", maxWidth: "700px", margin: "0 auto 8px auto" }}>
+          📍 <strong>ที่ตั้งร้าน:</strong> จ.ปทุมธานี อ.ลำลูกกา ต.คูคต ซ.ไม่รู้ถามพ่อมึงดู 888/888 ข้างบ้านเอ็มออนิว
+        </p>
+        <p style={{ fontSize: "16px", color: "#38bdf8", fontWeight: "bold", margin: 0 }}>
+          📞 เบอร์โทรเมียน้อย: 099-999-9999
+        </p>
+      </footer>
     </div>
   );
 }
