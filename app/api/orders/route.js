@@ -13,7 +13,6 @@ export async function GET(request) {
 
     const isStaff = ["superadmin", "admin", "sales"].includes(user.role);
 
-    // ทีมงานดึงทั้งหมด ส่วนลูกค้าดึงเฉพาะของตัวเอง
     const whereClause = isStaff ? "" : "WHERE orders.user_id = ?";
     const queryParams = isStaff ? [] : [user.id];
 
@@ -26,6 +25,7 @@ export async function GET(request) {
         users.fullname AS customerName,
         users.email AS customerEmail,
         users.phone AS customerPhone,
+        users.avatar AS customerAvatar,
         cars.brand AS carBrand,
         cars.model AS carModel,
         cars.price AS carPrice,
