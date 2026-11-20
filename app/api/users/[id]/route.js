@@ -27,6 +27,14 @@ export async function PUT(request, { params }) {
     );
   }
 
+  // กัน admin ปรับสิทธิ์ให้คนอื่นเป็น sales (มี s)
+  if (user.role === "admin" && role === "sales") {
+    return NextResponse.json(
+      { status: "error", message: "Admin cannot assign the sales role" },
+      { status: 403 }
+    );
+  }
+
   await pool.query("UPDATE users SET role = ? WHERE id = ?", [role, id]);
   return NextResponse.json({ status: "ok" });
 }

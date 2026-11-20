@@ -1,40 +1,13 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/lib/db";
 import { requirePermission } from "@/lib/auth";
-import { PERMISSIONS } from "@/lib/rbac";
 
-// PUT /api/users/{id} — เปลี่ยน role ของผู้ใช้ ต้องมีสิทธิ์ user:manage
-export async function PUT(request, { params }) {
-  const { user, error } = await requirePermission(request, "user:manage");
+// GET /api/users — รายชื่อผู้ใช้ทั้งหมด ต้องมีสิทธิ์ user:manage
+export async function GET(request) {
+  const { error } = await requirePermission(request, "user:manage");
   if (error) return error;
 
-  const { id } = await params;
-  const { role } = await request.json();
-
-  // รับเฉพาะ role ที่มีอยู่ใน PERMISSIONS
-  if (!Object.keys(PERMISSIONS).includes(role)) {
-    return NextResponse.json(
-      { status: "error", message: "Invalid role" },
-      { status: 400 }
-    );
-  }
-
-  // กัน admin ลดสิทธิ์ตัวเองจนไม่มี admin เหลือในระบบ
-  if (Number(id) === user.id) {
-    return NextResponse.json(
-      { status: "error", message: "You cannot change your own role" },
-      { status: 400 }
-    );
-  }
-
-  // กัน admin ปรับสิทธิ์ให้คนอื่นเป็น sales (มี s)
-  if (user.role === "admin" && role === "sales") {
-    return NextResponse.json(
-      { status: "error", message: "Admin cannot assign the sales role" },
-      { status: 403 }
-    );
-  }
-
-  await pool.query("UPDATE users SET role = ? WHERE id = ?", [role, id]);
-  return NextResponse.json({ status: "ok" });
+  // เลือกเฉพาะคอลัมน์ที่จำเป็น ไม่ส่ง hash ของรหัสผ่านออกไป
+  const [rows] = await pool.query("SELECT id, email, fullname, role FROM users ORDER BY id");
+  return NextResponse.json(rows);
 }
